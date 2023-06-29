@@ -210,17 +210,21 @@ public func verifySnapshot<Value, Format>(
         let myBundle = Bundle(for: CleanCounterBetweenTestCases.self)
         debugPrint(">>>>* bundle is", myBundle)
         let resourcePath = myBundle.path(forResource: "\(testName).\(identifier)", ofType: snapshotting.pathExtension)
-        debugPrint(">>>>* resource path is", resourcePath ?? "none/nil")
-        var snapshotFileUrl = resourcePath.map({ URL(fileURLWithPath: $0) })
-        debugPrint(">>>>* snapshotFileUrl is", snapshotFileUrl)
-        if snapshotFileUrl == nil {
-            snapshotFileUrl = snapshotDirectoryUrl
+        debugPrint(">>>>* resource path is", resourcePath)
+        var snapshotFileUrlCandidate = resourcePath.map({ URL(fileURLWithPath: $0) })
+        debugPrint(">>>>* snapshotFileUrl is", snapshotFileUrlCandidate)
+        if snapshotFileUrlCandidate == nil {
+            snapshotFileUrlCandidate = snapshotDirectoryUrl
                 .appendingPathComponent("\(testName).\(identifier)")
                 .appendingPathExtension(snapshotting.pathExtension ?? "")
-            debugPrint(">>>>* retrying, snapshotFileUrl is", snapshotFileUrl)
+            debugPrint(">>>>* retrying, snapshotFileUrl is", snapshotFileUrlCandidate)
         }
 
-        debugPrint(">>>> Checking for file @", snapshotFileUrl)
+        debugPrint(">>>> Checking for file @", snapshotFileUrlCandidate)
+        guard let snapshotFileUrl = snapshotFileUrlCandidate else {
+            debugPrint(">>>> candidate failed")
+            return nil
+        }
 
       let fileManager = FileManager.default
       try fileManager.createDirectory(at: snapshotDirectoryUrl, withIntermediateDirectories: true)
