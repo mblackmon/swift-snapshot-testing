@@ -173,6 +173,7 @@ public func verifySnapshot<Value, Format>(
   )
   -> String? {
 
+      debugPrint(">>>> Start of ", #function)
     CleanCounterBetweenTestCases.registerIfNeeded()
     let recording = recording || isRecording
 
@@ -199,9 +200,18 @@ public func verifySnapshot<Value, Format>(
       }
 
       let testName = sanitizePathComponent(testName)
-      let snapshotFileUrl = snapshotDirectoryUrl
-        .appendingPathComponent("\(testName).\(identifier)")
-        .appendingPathExtension(snapshotting.pathExtension ?? "")
+//      let snapshotFileUrl = snapshotDirectoryUrl
+//        .appendingPathComponent("\(testName).\(identifier)")
+//        .appendingPathExtension(snapshotting.pathExtension ?? "")
+
+        let myBundle = Bundle(for: CleanCounterBetweenTestCases.self)
+        let snapshotFileUrl = myBundle.path(forResource: "\(testName).\(identifier)", ofType: snapshotting.pathExtension).map({ URL(fileURLWithPath: $0) })
+        ?? snapshotDirectoryUrl
+            .appendingPathComponent("\(testName).\(identifier)")
+            .appendingPathExtension(snapshotting.pathExtension ?? "")
+
+        debugPrint(">>>> Checking for file @", snapshotFileUrl)
+
       let fileManager = FileManager.default
       try fileManager.createDirectory(at: snapshotDirectoryUrl, withIntermediateDirectories: true)
 
