@@ -206,11 +206,19 @@ public func verifySnapshot<Value, Format>(
 //        .appendingPathComponent("\(testName).\(identifier)")
 //        .appendingPathExtension(snapshotting.pathExtension ?? "")
 
+
         let myBundle = Bundle(for: CleanCounterBetweenTestCases.self)
-        let snapshotFileUrl = myBundle.path(forResource: "\(testName).\(identifier)", ofType: snapshotting.pathExtension).map({ URL(fileURLWithPath: $0) })
-        ?? snapshotDirectoryUrl
-            .appendingPathComponent("\(testName).\(identifier)")
-            .appendingPathExtension(snapshotting.pathExtension ?? "")
+        debugPrint(">>>>* bundle is", myBundle)
+        let resourcePath = myBundle.path(forResource: "\(testName).\(identifier)", ofType: snapshotting.pathExtension)
+        debugPrint(">>>>* resource path is", resourcePath ?? "none/nil")
+        var snapshotFileUrl = resourcePath.map({ URL(fileURLWithPath: $0) })
+        debugPrint(">>>>* snapshotFileUrl is", snapshotFileUrl)
+        if snapshotFileUrl == nil {
+            snapshotFileUrl = snapshotDirectoryUrl
+                .appendingPathComponent("\(testName).\(identifier)")
+                .appendingPathExtension(snapshotting.pathExtension ?? "")
+            debugPrint(">>>>* retrying, snapshotFileUrl is", snapshotFileUrl)
+        }
 
         debugPrint(">>>> Checking for file @", snapshotFileUrl)
 
