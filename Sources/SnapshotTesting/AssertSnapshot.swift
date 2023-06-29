@@ -72,6 +72,7 @@ public func assertSnapshots<Value, Format>(
   line: UInt = #line
   ) {
 
+      debugPrint(">>>> start of", #function, #line)
   try? strategies.forEach { name, strategy in
     assertSnapshot(
       matching: try value(),
@@ -106,6 +107,7 @@ public func assertSnapshots<Value, Format>(
   line: UInt = #line
   ) {
 
+      debugPrint(">>>> start of", #function, #line)
   try? strategies.forEach { strategy in
     assertSnapshot(
       matching: try value(),
@@ -173,7 +175,7 @@ public func verifySnapshot<Value, Format>(
   )
   -> String? {
 
-      debugPrint(">>>> Start of ", #function)
+      debugPrint(">>>> Start of ", #function, #line)
     CleanCounterBetweenTestCases.registerIfNeeded()
     let recording = recording || isRecording
 
